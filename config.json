@@ -1,0 +1,13 @@
+{
+  "drivers": [
+    {
+      "path": "/usr/local/cargo/bin/rsop"
+    },
+    {
+      "path": "/usr/bin/sqop"
+    }
+  ],
+  "rlimits": {
+    "DATA": 6442450944
+  }
+}

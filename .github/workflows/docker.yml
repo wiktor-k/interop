@@ -3,7 +3,8 @@ name: Docker
 on: [push, pull_request, workflow_dispatch]
 
 permissions:
-  contents: read
+  # we need the "write" permission to upload Docker layers
+  contents: write
   pages: write
   id-token: write
 

@@ -1,5 +1,12 @@
 name: Docker
-on: [push, pull_request]
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,21 +43,18 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
 
-      - name: Setup output git repository
+      - name: Setup Pages
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          cd /tmp/html
-          git init
-          git add -A
-          git config --local user.name "Page render bot"
-          git config --local user.email bot+render@metacode.biz
-          git commit -m "Deploy site"
+        uses: actions/configure-pages@v5
 
-      - name: Force push to destination branch
+      - name: Upload artifact
         if: ${{ github.ref == 'refs/heads/main' }}
-        uses: ad-m/github-push-action@v0.8.0
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          force: true
-          directory: /tmp/html
+          # Upload entire repository
+          path: '/tmp/html'
+
+      - name: Deploy to GitHub Pages
+        if: ${{ github.ref == 'refs/heads/main' }}
+        id: deployment
+        uses: actions/deploy-pages@v4

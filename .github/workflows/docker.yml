@@ -36,4 +36,21 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
 
-      - run: ls -la /tmp/html
+      - name: Setup output git repository
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          cd /tmp/html
+          git init
+          git add -A
+          git config --local user.name "Page render bot"
+          git config --local user.email bot+render@metacode.biz
+          git commit -m "Deploy site"
+
+      - name: Force push to destination branch
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          force: true
+          directory: /tmp/html

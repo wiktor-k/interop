@@ -28,7 +28,12 @@ jobs:
           context: .
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ghcr.io/${{ github.repository }}:latest
+          # Target stage to build from the Dockerfile... "FROM ... AS html"
+          target: html
+          outputs: type=local,dest=/tmp/html
           platforms: linux/amd64
           # see: https://blacksmith.sh/blog/cache-is-king-a-guide-for-docker-layer-caching-in-github-actions
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
+
+      - run: ls -la /tmp/html
